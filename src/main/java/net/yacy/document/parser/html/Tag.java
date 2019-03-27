@@ -274,13 +274,14 @@ public class Tag {
         } else {
             // a child
             // check if the item is already set because then the new node must be appended to existing data
-           
-            if (thisNode.hasPredicate(itemprop) && thisNode.getPredicateValue(itemprop) instanceof JSONObject) {
-                thisNode.getJSON().getJSONObject(itemprop).putAll(childNode.getJSON());
-            } else {
-                //if (typeof != null) {childNode.setType(typeof);}
-                thisNode.setPredicate(itemprop, childNode.getJSON());
-            }
+
+            thisNode.addPredicate(itemprop, childNode.getJSON());
+//            if (thisNode.hasPredicate(itemprop) && thisNode.getPredicateValue(itemprop) instanceof JSONObject) {
+//                thisNode.getJSON().getJSONObject(itemprop).putAll(childNode.getJSON());
+//            } else {
+//                //if (typeof != null) {childNode.setType(typeof);}
+//                thisNode.setPredicate(itemprop, childNode.getJSON());
+//            }
         }
     }
     
@@ -331,7 +332,13 @@ public class Tag {
                 if (!json.has(itemprop)) {
                     json.put(itemprop, new JSONObject(true));
                 }
-                json.getJSONObject(itemprop).put(JsonLD.TYPE, typeof);
+                if (json.get(itemprop) instanceof JSONArray) {
+                    for (Object jsonObject: json.getJSONArray(itemprop)) {
+                        ((JSONObject) jsonObject).put(JsonLD.TYPE, typeof);
+                    }
+                } else {
+                    json.getJSONObject(itemprop).put(JsonLD.TYPE, typeof);
+                }
             }
         }
         
