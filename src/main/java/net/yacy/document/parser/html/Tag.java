@@ -250,23 +250,10 @@ public class Tag {
                 // both objects are graph elements of the parent node
                 this.ld.addNode();
                 this.ld.getCurrentNode().getJSON().putAll(childNode.getJSON());
-            } else {            
+
+            } else {
                 for (String key: childNode.getPredicates()) {
-                    if (thisNode.hasPredicate(key)) {
-                        // prevent overwriting by creation or extension of an array
-                        Object o0 = thisNode.getPredicateValue(key);
-                        Object o1 = childNode.getPredicateValue(key);
-                        if (o0 instanceof JSONArray) {
-                            ((JSONArray) o0).put(o1);
-                        } else {
-                            JSONArray a = new JSONArray();
-                            a.put(o0);
-                            a.put(o1);
-                            thisNode.setPredicate(key, a);
-                        }
-                    } else {
-                        thisNode.getJSON().put(key, childNode.getJSON().get(key));
-                    }
+                    thisNode.addPredicate(key, childNode.getPredicateValue(key));
                 }
                 if (childNode.hasType()) thisNode.setType(childNode.getType());
             }
@@ -274,14 +261,7 @@ public class Tag {
         } else {
             // a child
             // check if the item is already set because then the new node must be appended to existing data
-
             thisNode.addPredicate(itemprop, childNode.getJSON());
-//            if (thisNode.hasPredicate(itemprop) && thisNode.getPredicateValue(itemprop) instanceof JSONObject) {
-//                thisNode.getJSON().getJSONObject(itemprop).putAll(childNode.getJSON());
-//            } else {
-//                //if (typeof != null) {childNode.setType(typeof);}
-//                thisNode.setPredicate(itemprop, childNode.getJSON());
-//            }
         }
     }
     
